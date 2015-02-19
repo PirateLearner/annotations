@@ -1,0 +1,30 @@
+html, body {
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  color: #212121; }
+
+nav {
+  display: block;
+  background-color: smokescreen;
+  color: black;
+  box-shadow: 0 2px 3px 0 rgba(33, 33, 33, 0.6); }
+
+section {
+  position: relative;
+  width: 100%;
+  margin: 0 auto; }
+  @media (min-width: 992px) {
+    section {
+      width: 80%; } }
+  section article {
+    width: 95%;
+    margin: 0 auto;
+    line-height: 1.5;
+    letter-spacing: 1px;
+    font-size: 1.5rem;
+    text-align: justify; }
+    @media (min-width: 992px) {
+      section article {
+        width: 60rem; } }

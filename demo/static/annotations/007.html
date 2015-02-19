@@ -1,0 +1,69 @@
+<html>
+<head>
+	<title>007: Dealing with orphans</title>
+    <link rel="stylesheet" href="css/007/styles.css"></link>
+</head>
+<body>
+	<nav>
+		<a href="#" >Home</a>
+	</nav>
+	<section>
+		<article id="commentable-container">
+		<p id="1">So, here is how we answered them:</p>
+		<h3 id="2">How do we identify what comments were made on what paragraph?</h3> 
+		<p id="3">We developed an engine in our content app, which assigns unique IDs to each content type on which annotations can be created by the 
+		user before it is saved to the database. 
+		For every article, these IDs start from 1. The obvious limitation being that the we cannot have annotations on a page where 
+		more than one database entries are being displayed. I think that is okay, for annotations on blurb listing pages would be absurd for me. 
+		Anytime the content gets updated, the previous IDs remain intact (unless the content is deleted). Even in the event of content deletion, 
+		the ID is never reused (it is a linear list which constantly increments). The annotations are saved with keys to their article and its paragraph ID.
+		</p>
+		<h3 id="4">What if that paragraph or content is deleted?</h3>
+		<p id="5">The answer lies not in how we save annotations, but in how we display it. Annotations are displayed in two places on a page. 
+		One is where they belong, on the margins of the text. Next, they are also collected down in a separate tab adjacent to the comments tab. 
+		If there are some orphaned annotations, you can find them in this annotation bucket. 
+		Plus, if you want to treat them as regular comments, so be it, they are here, at the bottom of the page.</p> 
+
+		<h3 id="6">What if the author of the article wants to respond but only let the author of annotation know?</h3>
+		<p id="7">Since we have already proposed that we would want to maximize tunability of privacy in our projects, scalability of such flexibility is paramount. 
+		But we have to make tradeoffs to make something work, and since we value your privacy more than anything, 
+		we have found our answer in dealing with this problem outside the context of annotations. 
+		But to understand the rationale of our solution, you will have to understand what annotations mean to us.
+		Annotations are personal interjections, or ponderings that happen while reading an article. 
+		They are not exactly debatable, but can be a short feedback of sorts to authors, something said by a person to a person, and not broadcasted to everyone.
+		Thus, annotations that are aimed at starting conversations must result into conversations, but not on the post, but in the privacy of message boxes.
+		Say, a person made a public annotation on an article, and somebody wanted to respond to it. He can respond to it via a message. 
+		This is possible rather easily because the other person too is a member (since annotations are for signed up users). 
+		This can lead to great friendships and establishing novel social study circles while keeping the article relatively clean of the informal chatter that might then take place. 
+		The concept of group messaging shall allow more people to join in the conversation should the two (original people in conversation) oblige unanimously.
+		Unanimous vote is required because even one person who does not oblige will be offended, and if that is so, we have a problem.
+		</p> 
+		</article>
+        <div class="article-adjunct">
+            <nav class="article-adjunct-nav">
+                <ul class="article-adjunct-nav--list">
+                    <li class="nav-tab article-adjunct-nav--item active"><a href="#article-adjunct-tab-notes"><span>Notes</span></a></li>
+                    <li class="nav-tab article-adjunct-nav--item"><a href="#article-adjunct-tab-discuss"><span>Discussions</span></a></li>
+                    <li class="nav-tab article-adjunct-nav--item"><a href="#article-adjunct-tab-questions"><span>Questions</span></a></li>
+                </ul>
+            </nav>
+            <div class="article-adjunct-block">
+                <div class="article-adjunct-tab active comments-container" id="article-adjunct-tab-notes">
+                    
+                </div>
+                <div class="article-adjunct-tab" id="article-adjunct-tab-discuss">
+                    The concept of group messaging shall allow more people to join in the conversation should the two (original people in conversation) oblige unanimously.
+        Unanimous vote is required because even one person who does not oblige will be offended, and if that is so, we have a problem.
+                </div>
+                <div class="article-adjunct-tab" id="article-adjunct-tab-questions">
+                    Thus, annotations that are aimed at starting conversations must result into conversations, but not on the post, but in the privacy of message boxes.
+        Say, a person made a public annotation on an article, and somebody wanted to respond to it. He can respond to it via a message.
+                </div>
+            </div>
+        </div>
+	</section>
+        
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="js/007/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+Django==1.6.8
+
+pi-blogging >=0.1.0b1
+
+#blogging requirements
+django-classy-tags==0.4
+html5lib==1.0b1
+django-mptt==0.6
+django-sekizai==0.7
+six==1.3.0
+
+django-ckeditor==4.4.4
+
+south==1.0.2
+# Optional, recommended packages
+
+Pillow
+django-filer==0.9.5
+django-reversion==1.8.5
+
+django_select2
+easy_thumbnails
+django-taggit
+django-crispy-forms
+
+beautifulsoup4
+lxml
+
+#annotation requirements
+djangorestframework
+rest_framework_generic_relations
+
+selenium

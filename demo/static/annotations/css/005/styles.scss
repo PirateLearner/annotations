@@ -1,0 +1,426 @@
+//== Color Schemes
+$text-color: rgb(33,33,33);
+
+
+//== Media queries breakpoints
+//
+//## Define the breakpoints at which your layout will change, adapting to different screen sizes.
+
+// Extra small screen / phone
+//** Deprecated `$screen-xs` as of v3.0.1
+$screen-xs:                  480px !default;
+//** Deprecated `$screen-xs-min` as of v3.2.0
+$screen-xs-min:              $screen-xs !default;
+//** Deprecated `$screen-phone` as of v3.0.1
+$screen-phone:               $screen-xs-min !default;
+
+// Small screen / tablet
+//** Deprecated `$screen-sm` as of v3.0.1
+$screen-sm:                  768px !default;
+$screen-sm-min:              $screen-sm !default;
+//** Deprecated `$screen-tablet` as of v3.0.1
+$screen-tablet:              $screen-sm-min !default;
+
+// Medium screen / desktop
+//** Deprecated `$screen-md` as of v3.0.1
+$screen-md:                  992px !default;
+$screen-md-min:              $screen-md !default;
+//** Deprecated `$screen-desktop` as of v3.0.1
+$screen-desktop:             $screen-md-min !default;
+
+// Large screen / wide desktop
+//** Deprecated `$screen-lg` as of v3.0.1
+$screen-lg:                  1200px !default;
+$screen-lg-min:              $screen-lg !default;
+//** Deprecated `$screen-lg-desktop` as of v3.0.1
+$screen-lg-desktop:          $screen-lg-min !default;
+
+// So media queries don't overlap when required, provide a maximum
+$screen-xs-max:              ($screen-sm-min - 1) !default;
+$screen-sm-max:              ($screen-md-min - 1) !default;
+$screen-md-max:              ($screen-lg-min - 1) !default;
+
+
+//Mixins
+@mixin border-radius($x-radius: 0px, $y-radius: 0px ) {
+  -webkit-border-top-left-radius:$x-radius $y-radius;
+  -webkit-border-top-right-radius:$x-radius $y-radius;
+  -webkit-border-bottom-right-radius:$x-radius $y-radius;
+  -webkit-border-bottom-left-radius:$x-radius $y-radius;
+  //Escape 
+  -moz-border-radius:#{$x-radius}/#{$y-radius};
+  -ms-border-radius:#{$x-radius}/#{$y-radius};
+  border-radius:#{$x-radius}/#{$y-radius};
+}
+
+@mixin border-bottom-right-radius($x-radius: 0px, $y-radius: 0px ){
+  -webkit-border-bottom-right-radius:$x-radius $y-radius;
+  -moz-border-radius-bottomright:$x-radius $y-radius;
+  -o-border-bottom-right-radius:$x-radius $y-radius;
+  border-bottom-right-radius:$x-radius $y-radius;
+}
+
+@mixin border-bottom-left-radius($x-radius: 0px, $y-radius: 0px ){
+  -webkit-border-bottom-left-radius:$x-radius $y-radius;
+  -moz-border-radius-bottomleft:$x-radius $y-radius;
+  -ms-border-radius-bottom-left:$x-radius $y-radius;
+  -o-border-bottom-left-radius:$x-radius $y-radius;
+  border-bottom-left-radius:$x-radius $y-radius;
+}
+
+// Background color gradient
+// Color stops are not available in IE9 and below.
+@mixin background-gradient($start-color: #555, $end-color: #333, $start-percent: 0%, $end-percent: 100%){
+  background:-webkit-gradient(linear, 0 $start-percent , 0 $end-percent, from( $start-color ), to( $end-color ));
+  background:-moz-linear-gradient($start-color, $end-color);
+  background:-o-linear-gradient($start-color, $end-color);
+  background:linear-gradient($start-color, $end-color);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{ie-hex-str($start-color)}', endColorstr='#{ie-hex-str($end-color)}', GradientType=1); // IE9 and down
+ }
+ 
+ @mixin transform-translate($x-transform: 0px, $y-transform:0px){
+  -webkit-transform:translate($x-transform, $y-transform);
+  -moz-transform:translate($x-transform, $y-transform);
+  -ms-transform:translate($x-transform, $y-transform);
+  -o-transform:translate($x-transform, $y-transform);
+  transform:translate($x-transform, $y-transform);
+ }
+  
+@mixin animation($function: fadeIn, $duration: .3s){
+  -webkit-animation: $function $duration;
+  animation: $function $duration;
+}
+
+//CSS Styling
+//--------------
+
+@-webkit-keyframes fadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
+}
+
+html, body {
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  color: $text-color;
+}
+
+nav {
+  display: block;
+  background-color: smokescreen;
+  color: black;
+  box-shadow: 0 2px 3px 0 rgba(33,33,33,0.6);
+}
+
+section{
+  position: relative;
+  width: 100%;
+  @media(min-width: $screen-md){
+     width: 80%;
+    }
+  margin: 0 auto;
+  
+  article{
+    width:95%;    
+    @media(min-width: $screen-md){
+      width: 55rem;
+    }
+    margin: 0 auto;
+    line-height: 1.5;
+    letter-spacing: 1px;
+    font-size: 1.5rem;
+    text-align: justify;
+    
+    .annotation--container{
+        position: relative;
+        width: 100%;
+        
+        &>*{
+          position: relative;
+          display: block;
+          @media(min-width: $screen-md){
+            overflow: visible;
+          }
+        
+        }
+        
+        &>*:not(.comments){
+          padding-right: 60px;
+        }
+      
+      .comments{
+        
+        @media(min-width: $screen-md){
+          position: absolute;
+          width: 60px;
+          right: 0px;
+          top: 0;
+          
+          z-index: 5;
+        }
+        
+       &:focus, &:hover{
+         border: none;
+       }
+       
+       .comments--toggle{
+       
+         display:none;
+              
+         position: absolute;
+         right: 0px;
+         top: -50%;
+         
+         @media(min-width: $screen-md){
+          top: 20px;
+          left: 5px;
+          right: auto;
+         }
+         padding: 1px 3px;
+         margin:0;
+         background-color: rgba(228, 226, 226, 1);
+         //@include background-gradient(#dcdada, #dcdada);
+         
+         border-color: rgba(228, 226, 226, 0.8);
+         
+         &.has-annotations{
+            display:inline-block;
+          }
+         
+         &:hover{
+          background-color: rgba(96, 148, 2, 1);
+          //@include background-gradient(#b8db29, #5a8f00);
+         
+          border-color: rgba(96, 148, 2, 1);
+         }
+         
+          /*
+          &:not([class*="has-annotations"]){
+            background-color: rgba(228, 226, 226, 0.8);
+            border-color: rgba(228, 226, 226, 0.8);
+            @include background-gradient(#dcdada, #dcdada);
+          }
+          */
+         
+         &.annotation-highlight{
+          background-color: rgba(96, 148, 2, 1);
+          border-color: rgba(96, 148, 2, 1);
+        }
+       }
+       
+       .comments--toggle__oval{
+          display: inline-block;
+          border-radius: 3px;
+       }
+       
+       .comments--toggle__rectangle{
+          display: inline-block;
+       } 
+       
+       .comments-container{
+          padding: 0;
+          padding-left: 10%;
+          position: relative;
+                   
+          @include animation(fadeIn, .15s);
+          
+         /* On larger screens, their widths are smaller, constrained*/
+          @media(min-width: $screen-md){
+            width: 30rem;
+            padding: 20px 0 0 40px;
+          }
+        
+          color: lighten($text-color, 40%);
+          
+          .comments-container--text{
+            display: block;
+            position: relative;
+            padding-top: 20px;
+            font-size: 1.2rem;
+            
+            &:first-child{
+              padding-top: 5px;
+            }
+          }
+        }    
+      }
+    }
+    
+    &.annotations-active{
+        @media(min-width: $screen-md) and (max-width: $screen-lg){
+          transform: translate(-25rem,0);
+          transition: all 1s;        
+        }
+    }
+    
+  }
+}
+
+
+#commentable-container{
+    @media(min-width: $screen-md) and (max-width: $screen-lg){
+      transition: all 1s;        
+    }
+   .annotation--container:hover > .comments > .comments--toggle {
+    display: block;
+  }
+}
+
+.clearfix{
+  &:before, &:after{
+    content: " ";
+    display: table;
+  }
+  
+  &:after{
+    clear: both;
+  }
+}
+
+.hidden{
+  display: none;
+}
+
+
+/* ------------------------------------------
+PURE CSS SPEECH BUBBLES
+by Nicolas Gallagher
+- http://nicolasgallagher.com/pure-css-speech-bubbles/
+
+http://nicolasgallagher.com
+http://twitter.com/necolas
+
+Created: 02 March 2010
+Version: 1.2 (03 March 2011)
+
+Dual licensed under MIT and GNU GPLv2 Nicolas Gallagher
+------------------------------------------ */
+/* ============================================================================================================================
+== OVAL SPEECH BUBBLE (more CSS3)
+** ============================================================================================================================ */
+
+.oval-speech {
+  position:relative;
+  
+  min-width: 25px;
+  min-height: 20px;
+  width:auto;
+  
+  padding: 0;
+  margin: 0;
+  
+  text-align:center;
+  color:#fff;
+  background:#5a8f00;
+  
+  border-color: inherit;
+  /* css3 */
+  @include background-gradient(#b8db29, #5a8f00);
+  
+  @include border-radius(100%, 100%);
+  
+  p {
+    font-size:0.5em;
+    margin:0;
+    padding:0 3px;  
+  }
+  
+  /* creates part of the curve */
+  &:before {
+    content:"";
+    position:absolute;
+    z-index:-1;
+    bottom:-7px;
+    right:50%;
+    
+    background:inherit; /* need this for webkit - bug in handling of border-radius */
+    
+    border: 7px solid;
+    border-color: inherit;
+    border-top: 7px solid transparent;
+    border-left: 7px solid transparent;
+    /* css3 */
+    @include border-bottom-right-radius(100%,100%);
+    
+    /* using translate to avoid undesired appearance in CSS2.1-capabable but CSS3-incapable browsers */
+    @include transform-translate(0, -2px);
+  }
+
+/* creates part of the curved pointy bit */
+  &:after {
+    content:"";
+    position:absolute;
+    z-index:-1;
+    bottom:-7px;
+    right:50%;
+    
+    background:#fff;
+    
+    border: 7px solid white;
+    border-top: 7px solid transparent;
+    border-left: 7px solid transparent;
+    /* css3 */
+    @include border-bottom-right-radius(100%,150%);
+    /* using translate to avoid undesired appearance in CSS2.1-capabable but CSS3-incapable browsers */
+    @include transform-translate(-50%, -2px);
+  }
+}
+
+.rectangular-speech{
+  position:relative;
+  
+  min-width: 25px;
+  min-height: 20px;
+  width:auto;
+  
+  padding: 0;
+  margin: 0;
+  
+  z-index: 2;
+  
+  text-align:center;
+  color:#fff;
+  background:inherit;
+  border-color: inherit;
+  /* css3 */
+  //@include background-gradient(#b8db29, #5a8f00);
+  
+  @include border-radius(15%, 15%);
+  
+  p {
+    font-size:0.5em;
+    margin:0;
+    padding:0 3px;  
+  }
+  
+  &:before {
+    content:"";
+  }  
+  /* creates the triangle */
+  &:after {
+    content:"";
+    position:absolute;
+    z-index:-1;
+    bottom:-10px;
+    right:10%;
+        
+    border: 10px solid;
+    border-color: inherit;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    /* css3 */
+        
+    /* using translate to avoid undesired appearance in CSS2.1-capabable but CSS3-incapable browsers */
+    @include transform-translate(0, -2px);
+  }
+}
+
+// End
