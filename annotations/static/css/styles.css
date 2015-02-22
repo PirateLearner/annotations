@@ -1,0 +1,436 @@
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0; }
+
+  to {
+    opacity: 1; } }
+@keyframes fadeIn {
+  from {
+    opacity: 0; }
+
+  to {
+    opacity: 1; } }
+html, body {
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  color: #212121; }
+
+nav {
+  display: block;
+  background-color: smokescreen;
+  color: black;
+  box-shadow: 0 2px 3px 0 rgba(33, 33, 33, 0.6); }
+
+section {
+  position: relative;
+  width: 100%;
+  margin: 0 auto 50px; }
+  @media (min-width: 992px) {
+    section {
+      width: 80%; } }
+  section article {
+    width: 95%;
+    margin: 0 auto;
+    line-height: 1.5;
+    letter-spacing: 1px;
+    font-size: 1.5rem;
+    text-align: justify;
+    border: 1px solid rgba(233, 233, 233, 0.7);
+    border-top: none;
+    border-left: none;
+    border-bottom: none; }
+    @media (min-width: 992px) {
+      section article {
+        width: 55rem; } }
+    section article .annotation--container {
+      position: relative;
+      width: 100%; }
+      section article .annotation--container > * {
+        position: relative;
+        display: block; }
+        @media (min-width: 992px) {
+          section article .annotation--container > * {
+            overflow: visible; } }
+      section article .annotation--container > *:not(.comments) {
+        padding-right: 60px; }
+      @media (min-width: 992px) {
+        section article .annotation--container .comments {
+          position: absolute;
+          width: 60px;
+          right: 0px;
+          top: 0;
+          z-index: 5; } }
+      section article .annotation--container .comments:focus, section article .annotation--container .comments:hover {
+        border: none; }
+      section article .annotation--container .comments .comments--toggle {
+        display: none;
+        position: absolute;
+        right: 0px;
+        top: -50%;
+        padding: 1px 3px;
+        margin: 0;
+        background-color: #e4e2e2;
+        border-color: rgba(228, 226, 226, 0.8);
+        /*
+        &:not([class*="has-annotations"]){
+          background-color: rgba(228, 226, 226, 0.8);
+          border-color: rgba(228, 226, 226, 0.8);
+          @include background-gradient(#dcdada, #dcdada);
+        }
+        */ }
+        @media (min-width: 992px) {
+          section article .annotation--container .comments .comments--toggle {
+            top: 20px;
+            left: 5px;
+            right: auto; } }
+        section article .annotation--container .comments .comments--toggle.has-annotations {
+          display: inline-block; }
+        section article .annotation--container .comments .comments--toggle:hover {
+          background-color: #609402;
+          border-color: #609402; }
+        section article .annotation--container .comments .comments--toggle.annotation-highlight {
+          background-color: #609402;
+          border-color: #609402; }
+      section article .annotation--container .comments .comments--toggle__oval {
+        display: inline-block;
+        border-radius: 3px; }
+      section article .annotation--container .comments .comments--toggle__rectangle {
+        display: inline-block; }
+      section article .annotation--container .comments .comments-container {
+        padding: 0;
+        padding-left: 10%;
+        position: relative;
+        -webkit-animation: fadeIn 0.15s;
+        animation: fadeIn 0.15s;
+        /* On larger screens, their widths are smaller, constrained*/
+        color: #878787; }
+        @media (min-width: 992px) {
+          section article .annotation--container .comments .comments-container {
+            width: 30rem;
+            padding: 20px 0 0 65px; } }
+        section article .annotation--container .comments .comments-container .comments-form-block {
+          position: relative;
+          display: block; }
+          section article .annotation--container .comments .comments-container .comments-form-block .comments-form {
+            position: relative; }
+            section article .annotation--container .comments .comments-container .comments-form-block .comments-form .comments-form--user-input {
+              position: relative;
+              display: block;
+              -webkit-border-top-left-radius: 2px 2px;
+              -webkit-border-top-right-radius: 2px 2px;
+              -webkit-border-bottom-right-radius: 2px 2px;
+              -webkit-border-bottom-left-radius: 2px 2px;
+              -moz-border-radius: 2px/2px;
+              -ms-border-radius: 2px/2px;
+              border-radius: 2px/2px;
+              border: 1px solid rgba(233, 233, 233, 0.7);
+              font-size: 1.2rem; }
+            section article .annotation--container .comments .comments-container .comments-form-block .comments-form .comments-submit {
+              position: relative;
+              display: inline-block;
+              text-align: center;
+              margin-top: 2px;
+              vertical-align: middle;
+              cursor: pointer;
+              font-size: 1.2rem;
+              line-height: 1.7;
+              -webkit-border-top-left-radius: 4px 4px;
+              -webkit-border-top-right-radius: 4px 4px;
+              -webkit-border-bottom-right-radius: 4px 4px;
+              -webkit-border-bottom-left-radius: 4px 4px;
+              -moz-border-radius: 4px/4px;
+              -ms-border-radius: 4px/4px;
+              border-radius: 4px/4px;
+              background-color: #428bca;
+              border: 1px solid #6aa3d5; }
+        section article .annotation--container .comments .comments-container .comments-bucket-toggle {
+          display: block;
+          position: relative;
+          width: 100%;
+          padding: 2px;
+          background-color: rgba(233, 233, 233, 0.7);
+          border: 1px solid rgba(233, 233, 233, 0.7);
+          -webkit-border-top-left-radius: 2px 2px;
+          -webkit-border-top-right-radius: 2px 2px;
+          -webkit-border-bottom-right-radius: 2px 2px;
+          -webkit-border-bottom-left-radius: 2px 2px;
+          -moz-border-radius: 2px/2px;
+          -ms-border-radius: 2px/2px;
+          border-radius: 2px/2px;
+          font-size: 1rem;
+          text-align: center;
+          color: inherit; }
+          section article .annotation--container .comments .comments-container .comments-bucket-toggle.folded:before {
+            content: "Show"; }
+          section article .annotation--container .comments .comments-container .comments-bucket-toggle.unfolded:before {
+            content: "Hide"; }
+          section article .annotation--container .comments .comments-container .comments-bucket-toggle.hidden {
+            display: none; }
+        section article .annotation--container .comments .comments-container .comments-container-bucket {
+          position: relative; }
+    @media (min-width: 992px) and (max-width: 1200px) {
+      section article.annotations-active {
+        transform: translate(-25rem, 0);
+        transition: all 1s; } }
+
+.comments-container-item {
+  padding-top: 10px;
+  margin-bottom: 10px; }
+  .comments-container-item .comments-container--media {
+    position: relative;
+    float: left;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    border: 1px solid rgba(233, 233, 233, 0.7); }
+    .comments-container-item .comments-container--media img {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      border: none; }
+  .comments-container-item .comments-container--block {
+    padding-left: 40px;
+    position: relative;
+    padding-right: 5px;
+    padding-top: 5px; }
+    .comments-container-item .comments-container--block a {
+      color: #212121;
+      text-decoration: none; }
+    .comments-container-item .comments-container--block .comments-author-name {
+      position: relative;
+      font-size: 1.3rem;
+      font-style: none;
+      text-decoration: none; }
+    .comments-container-item .comments-container--block .comments-container--text {
+      display: block;
+      position: relative;
+      font-size: 1.2rem; }
+  .comments-container-item:first-child {
+    padding-top: 5px; }
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  #commentable-container {
+    transition: all 1s; } }
+#commentable-container .annotation--container:hover > .comments > .comments--toggle {
+  display: block; }
+
+.clearfix:before, .clearfix:after {
+  content: " ";
+  display: table; }
+.clearfix:after {
+  clear: both; }
+
+.hidden {
+  display: none; }
+
+.article-adjunct {
+  display: block;
+  position: relative;
+  width: 95%;
+  margin: 0 auto;
+  line-height: 1.5;
+  letter-spacing: 1px;
+  font-size: 1.5rem;
+  text-align: justify; }
+  @media (min-width: 992px) {
+    .article-adjunct {
+      width: 55rem; } }
+  .article-adjunct .article-adjunct-nav {
+    padding: 10px 0 10px 0;
+    border: 1px solid rgba(233, 233, 233, 0.7);
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+    display: table;
+    width: 100%; }
+    .article-adjunct .article-adjunct-nav a {
+      text-decoration: none;
+      color: #212121; }
+    .article-adjunct .article-adjunct-nav .article-adjunct-nav--list {
+      list-style: none;
+      display: table-row;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      padding: 5px 10px; }
+    .article-adjunct .article-adjunct-nav .article-adjunct-nav--item {
+      display: table-cell;
+      width: 33%;
+      position: relative;
+      background-color: #b3b3b3;
+      border: 1px solid rgba(233, 233, 233, 0.7);
+      border-left: none;
+      text-align: center; }
+      .article-adjunct .article-adjunct-nav .article-adjunct-nav--item:first-child {
+        border-left: 1px solid rgba(233, 233, 233, 0.7); }
+      .article-adjunct .article-adjunct-nav .article-adjunct-nav--item a span {
+        width: 100%;
+        display: block; }
+  .article-adjunct .article-adjunct-block {
+    display: block;
+    position: relative;
+    border: 1px solid rgba(233, 233, 233, 0.7);
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    -webkit-border-top-left-radius: 3px 3px;
+    -webkit-border-top-right-radius: 3px 3px;
+    -webkit-border-bottom-right-radius: 3px 3px;
+    -webkit-border-bottom-left-radius: 3px 3px;
+    -moz-border-radius: 3px/3px;
+    -ms-border-radius: 3px/3px;
+    border-radius: 3px/3px; }
+    .article-adjunct .article-adjunct-block .article-adjunct-tab {
+      display: none;
+      position: relative; }
+      .article-adjunct .article-adjunct-block .article-adjunct-tab.active {
+        display: block; }
+      .article-adjunct .article-adjunct-block .article-adjunct-tab .comments-container {
+        padding: 0;
+        padding-left: 10%;
+        position: relative;
+        -webkit-animation: fadeIn 0.15s;
+        animation: fadeIn 0.15s;
+        width: 100%;
+        color: #878787; }
+
+/* ------------------------------------------
+PURE CSS SPEECH BUBBLES
+by Nicolas Gallagher
+- http://nicolasgallagher.com/pure-css-speech-bubbles/
+
+http://nicolasgallagher.com
+http://twitter.com/necolas
+
+Created: 02 March 2010
+Version: 1.2 (03 March 2011)
+
+Dual licensed under MIT and GNU GPLv2 Nicolas Gallagher
+------------------------------------------ */
+/* ============================================================================================================================
+== OVAL SPEECH BUBBLE (more CSS3)
+** ============================================================================================================================ */
+.oval-speech {
+  position: relative;
+  min-width: 25px;
+  min-height: 20px;
+  width: auto;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  color: #fff;
+  background: #5a8f00;
+  border-color: inherit;
+  /* css3 */
+  background: -webkit-gradient(linear, 0 0%, 0 100%, from(#b8db29), to(#5a8f00));
+  background: -moz-linear-gradient(#b8db29, #5a8f00);
+  background: -o-linear-gradient(#b8db29, #5a8f00);
+  background: linear-gradient(#b8db29, #5a8f00);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFB8DB29', endColorstr='#FF5A8F00', GradientType=1);
+  -webkit-border-top-left-radius: 100% 100%;
+  -webkit-border-top-right-radius: 100% 100%;
+  -webkit-border-bottom-right-radius: 100% 100%;
+  -webkit-border-bottom-left-radius: 100% 100%;
+  -moz-border-radius: 100%/100%;
+  -ms-border-radius: 100%/100%;
+  border-radius: 100%/100%;
+  /* creates part of the curve */
+  /* creates part of the curved pointy bit */ }
+  .oval-speech p {
+    font-size: 0.5em;
+    margin: 0;
+    padding: 0 3px; }
+  .oval-speech:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    bottom: -7px;
+    right: 50%;
+    background: inherit;
+    /* need this for webkit - bug in handling of border-radius */
+    border: 7px solid;
+    border-color: inherit;
+    border-top: 7px solid transparent;
+    border-left: 7px solid transparent;
+    /* css3 */
+    -webkit-border-bottom-right-radius: 100% 100%;
+    -moz-border-radius-bottomright: 100% 100%;
+    -o-border-bottom-right-radius: 100% 100%;
+    border-bottom-right-radius: 100% 100%;
+    /* using translate to avoid undesired appearance in CSS2.1-capabable but CSS3-incapable browsers */
+    -webkit-transform: translate(0, -2px);
+    -moz-transform: translate(0, -2px);
+    -ms-transform: translate(0, -2px);
+    -o-transform: translate(0, -2px);
+    transform: translate(0, -2px); }
+  .oval-speech:after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    bottom: -7px;
+    right: 50%;
+    background: #fff;
+    border: 7px solid white;
+    border-top: 7px solid transparent;
+    border-left: 7px solid transparent;
+    /* css3 */
+    -webkit-border-bottom-right-radius: 100% 150%;
+    -moz-border-radius-bottomright: 100% 150%;
+    -o-border-bottom-right-radius: 100% 150%;
+    border-bottom-right-radius: 100% 150%;
+    /* using translate to avoid undesired appearance in CSS2.1-capabable but CSS3-incapable browsers */
+    -webkit-transform: translate(-50%, -2px);
+    -moz-transform: translate(-50%, -2px);
+    -ms-transform: translate(-50%, -2px);
+    -o-transform: translate(-50%, -2px);
+    transform: translate(-50%, -2px); }
+
+.rectangular-speech {
+  position: relative;
+  min-width: 25px;
+  min-height: 20px;
+  width: auto;
+  padding: 0;
+  margin: 0;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+  background: inherit;
+  border-color: inherit;
+  /* css3 */
+  -webkit-border-top-left-radius: 15% 15%;
+  -webkit-border-top-right-radius: 15% 15%;
+  -webkit-border-bottom-right-radius: 15% 15%;
+  -webkit-border-bottom-left-radius: 15% 15%;
+  -moz-border-radius: 15%/15%;
+  -ms-border-radius: 15%/15%;
+  border-radius: 15%/15%;
+  /* creates the triangle */ }
+  .rectangular-speech p {
+    font-size: 0.5em;
+    margin: 0;
+    padding: 0 3px; }
+  .rectangular-speech:before {
+    content: ""; }
+  .rectangular-speech:after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    bottom: -10px;
+    right: 10%;
+    border: 10px solid;
+    border-color: inherit;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    /* css3 */
+    /* using translate to avoid undesired appearance in CSS2.1-capabable but CSS3-incapable browsers */
+    -webkit-transform: translate(0, -2px);
+    -moz-transform: translate(0, -2px);
+    -ms-transform: translate(0, -2px);
+    -o-transform: translate(0, -2px);
+    transform: translate(0, -2px); }

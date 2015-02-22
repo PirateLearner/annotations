@@ -26,6 +26,7 @@ class Annotation(models.Model):
     
     #User relevant stuff
     body = models.TextField()
+    paragraph = models.PositiveIntegerField(null=False)
     '''
     Annotations can be written only by logged in users. If the user cannot afford 
     to make himself and his interest in reading known, alas, we cannot help him in
@@ -38,11 +39,17 @@ class Annotation(models.Model):
     #Privacy reset for Spam protection, if annotation has been shared (and marked as offensive)
     privacy_override = models.BooleanField(default=False)
     #Shared with these users.
-    shared_with = models.ManyToManyField(User, through="Annotation_share_map", null="True")
+    shared_with = models.ManyToManyField(User, through="Annotation_share_map", null="True", blank=True)
     
     #Statistics related stuff
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+    
+    def __unicode__(self):
+        return self.body
+    
+    def __str__(self):
+        return self.body
     
     class Meta:
         app_label = 'annotations'
