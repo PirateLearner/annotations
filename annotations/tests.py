@@ -14,6 +14,8 @@ from unittest import skip
 #from django.http import request
 
 from blogging.models import BlogContent
+
+import json
 # Create your tests here.
 class TestAnnotations(TestCase):
     
@@ -41,9 +43,7 @@ class TestAnnotations(TestCase):
         
     def test_POST_annotation(self):
         #use test client to POST a request
-        response = self.client.post(
-            '/annotations/',
-            data = {
+        string_data = {
                     'content_type': '9',
                     'object_id':'1',
                     'paragraph':'1',
@@ -51,12 +51,19 @@ class TestAnnotations(TestCase):
                     'author':str(self.user.id),
                     'privacy':'3',
                     'privacy_override': '0',
-                    'shared_with':'1',
-                    },
+                    'shared_with': ['1'],
+                    }
+        json_data = json.dumps(string_data)
+        response = self.client.post(
+            '/annotations/',
+            content_type='application/json',
+            data = json_data,
          )
         
         #the result must redirect to the same page but not reload the same page (for now)
-        self.assertRedirects(response, '/blogging/articles/i-have-a-dream-by-martin-luther-king/1/')
+        #self.assertRedirects(response, '/blogging/articles/i-have-a-dream-by-martin-luther-king/1/')
+        
+        #Expect a JSON object in response
         
         #Try to get all the annotations. Count should be 1, and it must be ours.
                
@@ -71,9 +78,7 @@ class TestAnnotations(TestCase):
     def test_retrieve_annotations_for_post(self):
         #use test client to visit the page
         #create a few annotations first
-        self.client.post(
-            '/annotations/',
-            data = {
+        string_data = {
                     'content_type': '9',
                     'object_id':'1',
                     'paragraph':'1',
@@ -81,8 +86,13 @@ class TestAnnotations(TestCase):
                     'author':str(self.user.id),
                     'privacy':'3',
                     'privacy_override': '0',
-                    'shared_with':'1',
-                    },
+                    'shared_with': ['1'],
+                    }
+        json_data = json.dumps(string_data)
+        response = self.client.post(
+            '/annotations/',
+            content_type='application/json',
+            data = json_data,
          )
         
         response = self.client.get('/annotations/?content_type=blogcontent&object_id=1')

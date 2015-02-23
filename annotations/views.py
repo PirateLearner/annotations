@@ -8,11 +8,16 @@ from django.contrib.auth.models import User
 from annotations.forms import AnnotationForm
 from annotations.models import Annotation_share_map, Annotation
 
+import json
+from django.core import serializers
+
 # Create your views here.
 def home(request):
     if request.method == 'POST':
         #Handle the post request
-        annotation_form = AnnotationForm(request.POST)
+        json_data = json.loads(request.body)
+
+        annotation_form = AnnotationForm(json_data)
         #validate form
         if annotation_form.is_valid() is False:
             #Parse and debug error
@@ -27,7 +32,7 @@ def home(request):
                 sharing = Annotation_share_map(annotation=mapping, user=user)
                 sharing.save()
         #Find the reverse URL of the object where this annotation was posted
-        
+        '''
         #Get an instance of the object on which the annotation was posted.
         content_type = annotation_form.cleaned_data['content_type'];
         object_id = annotation_form.cleaned_data['object_id'];
@@ -39,14 +44,27 @@ def home(request):
         #get a reverse URL now
         reverse_url = object_instance.get_absolute_url()      
         return(HttpResponseRedirect(reverse_url))
-        
+        '''
+        annotation_json = {
+                           'body': annotation_form.cleaned_data['body'],
+                           'paragraph':annotation_form.cleaned_data['paragraph'],
+                           'id': mapping.id                           
+                           }
+        return HttpResponse(
+                           json.dumps(annotation_json),
+                           content_type='application/json'
+                           )
     elif request.method == 'GET':
         #Handle the GET request
         content_type = ContentType.objects.get(model=request.GET.get('content_type', None))
         object_id = request.GET.get('object_id', None)
         
-        annotation = Annotation.objects.filter(content_type=content_type.id, object_id=object_id)[0]
-        return HttpResponse(annotation.body)
+        annotation = Annotation.objects.filter(content_type=content_type.id, object_id=object_id)
+        annotation_json =serializers.serialize('json', annotation)
+        return HttpResponse(
+                            annotation_json,
+                           content_type='application/json'
+                           )
     #Homepage has nothing to do
     
 def update(request, id):
