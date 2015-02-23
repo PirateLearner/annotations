@@ -136,3 +136,7 @@ CKEDITOR_CONFIGS = {
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+FIXTURE_DIRS = (
+                BASE_DIR+'/demo/fixtures',
+                )
