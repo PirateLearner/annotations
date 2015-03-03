@@ -26,7 +26,8 @@ class TestAnnotations(TestCase):
         
     def tearDown(self):
         pass
-    
+
+class TestBasicAnnotations(TestAnnotations):    
     def test_can_resolve_app_url(self):
         obj = resolve('/annotations/')
         self.assertEqual(obj.func, home)
@@ -117,7 +118,7 @@ class TestAnnotations(TestCase):
 
 
 from annotations.forms import AnnotationForm 
-class TestForm(TestCase):
+class TestForm(TestAnnotations):
     
     @skip("Skipping test")
     def test_form_instance(self):
@@ -136,4 +137,29 @@ class TestForm(TestCase):
         #author
         self.assertTrue(hasattr(form_instance, 'author'))
         
+
+from annotations.serializers import AnnotationSerializer
+
+from rest_framework.renderers import JSONRenderer 
+
+class TestSerializers(TestAnnotations):
     
+    def test_create_serializer_class(self):
+        annotation = Annotation()
+        annotation.content_type=ContentType.objects.get(model='blogcontent', app_label="blogging")
+        annotation.object_id= str(1)
+        annotation.body="This is a test annotation"
+        annotation.paragraph="1"
+        annotation.author= User.objects.get(id=1)
+                
+        annotation.save()
+        obj = AnnotationSerializer(annotation)
+        print(obj.data)
+        
+        json = JSONRenderer().render(obj.data)
+        print json
+        
+    @skip('skipping')
+    def test_create_serializer_instance(self):
+        obj = AnnotationSerializer()
+        print(obj)
