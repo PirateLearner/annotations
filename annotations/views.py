@@ -5,12 +5,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 
 from annotations.forms import AnnotationForm
-from annotations.models import Annotation_share_map, Annotation
+from annotations.models import AnnotationShareMap, Annotation
 
 import json
 from django.core import serializers
 
 # Create your views here.
+"""
 def home(request):
     if request.method == 'POST':
         #Handle the post request
@@ -28,7 +29,7 @@ def home(request):
             mapping = annotation_form.save(commit=False)
             mapping.save()
             for user in annotation_form.cleaned_data.get('shared_with'):
-                sharing = Annotation_share_map(annotation=mapping, user=user)
+                sharing = AnnotationShareMap(annotation=mapping, user=user)
                 sharing.save()
         #Find the reverse URL of the object where this annotation was posted
         '''
@@ -68,7 +69,7 @@ def home(request):
     
 def update(request, id):
     pass
-
+"""
 from rest_framework import viewsets
 
 from annotations.serializers import *
@@ -109,6 +110,7 @@ class BlogContentViewSet(viewsets.ModelViewSet):
 
     def pre_save(self, obj):
         obj.author_id = self.request.user
+
         
 
 class AnnotationViewSet(viewsets.ModelViewSet):
@@ -119,7 +121,7 @@ class AnnotationViewSet(viewsets.ModelViewSet):
     
     def pre_save(self, obj):
         obj.user = self.request.user
-
+        
 # From hence, all models are representation of things that don't actually exist
 
 from rest_framework.views import APIView

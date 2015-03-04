@@ -43,8 +43,8 @@ urlpatterns = patterns('',
     url(r'^annotations/$', annotation_list, name='annotation-list'),
     url(r'^annotations/(?P<pk>[0-9]+)/$', annotation_detail, name='annotation-detail'),
     url(r'^rest/$', api_root),
-    url(r'^$', views.home, name='home'),
-    url(r'^/(?P<id>\d+)/', views.update, name='update')
+#   url(r'^$', views.home, name='home'),
+#    url(r'^/(?P<id>\d+)/', views.update, name='update')
  )
 urlpatterns += patterns('',
     url(r'^cr/(\d+)/(.+)/$', 'django.contrib.contenttypes.views.shortcut', name='comments-url-redirect'),

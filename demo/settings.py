@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'ckeditor',
     'annotations',
     'rest_framework',
+    'rest_framework.authtoken'
 )
 
 MIDDLEWARE_CLASSES = (

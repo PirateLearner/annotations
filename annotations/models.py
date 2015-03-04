@@ -39,7 +39,7 @@ class Annotation(models.Model):
     #Privacy reset for Spam protection, if annotation has been shared (and marked as offensive)
     privacy_override = models.BooleanField(default=False)
     #Shared with these users.
-    shared_with = models.ManyToManyField(User, through="Annotation_share_map", null="True", blank=True)
+    shared_with = models.ManyToManyField(User, through="AnnotationShareMap", null="True", blank=True)
     
     #Statistics related stuff
     date_created = models.DateTimeField(auto_now_add=True)
@@ -55,7 +55,14 @@ class Annotation(models.Model):
         app_label = 'annotations'
 
 
-class Annotation_share_map(models.Model):
+class AnnotationShareManager(models.Manager):
+    
+    def get_query_set(self):
+        qs = super(AnnotationShareManager, self).get_query_set()
+        return qs
+    
+
+class AnnotationShareMap(models.Model):
     '''@class Annotation_share_map
     Maintains a map of which annotation has been shared by the user with which of his friends, if applicable.
     Notification about the sharing should be sent to each person only once, even if the user edits the 
@@ -64,6 +71,7 @@ class Annotation_share_map(models.Model):
     user = models.ForeignKey(User)
     annotation = models.ForeignKey(Annotation)
     notified_flag = models.BooleanField(default = False)
+    objects = AnnotationShareManager()
     
     class Meta:
         app_label = 'annotations'   
