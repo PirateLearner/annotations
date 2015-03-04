@@ -17,13 +17,6 @@ class AnonymousUserSerializer(serializers.Serializer):
     username = serializers.CharField();
 
 
-class BlogContentGenericField(serializers.RelatedField):
-    
-    def to_representation(self, value):
-        if isinstance(value, Annotation):
-            return AnnotationSerializer(value).data 
-
-
 class BlogContentSerializer(serializers.ModelSerializer):
     #Tell BlogContent that it has a relation on Annotations    
     #annotation = BlogContentGenericField()

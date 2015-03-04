@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'ckeditor',
     'annotations',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (

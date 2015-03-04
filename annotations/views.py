@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
 
 from django.contrib.auth.models import User
 
@@ -71,6 +70,7 @@ def update(request, id):
     pass
 
 from rest_framework import viewsets
+
 from annotations.serializers import *
 from rest_framework import permissions
 from utils import IsOwnerOrReadOnly, AnnotationIsOwnerOrReadOnly
@@ -79,7 +79,16 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from blogging.models import BlogContent
+@api_view(('GET',))
+#If not set, the API root will assert for not having appropriate permissions.
+@permission_classes((permissions.IsAuthenticatedOrReadOnly, ))
+def api_root(request, format=None):
+    return Response({
+        'blogcontent': reverse('annotations:blogcontent-list', request=request, format=format),
+        'user': reverse('annotations:user-list', request=request, format=format),
+        'annotations': reverse('annotations:annotation-list', request=request, format=format),
+        'currentUser': reverse('annotations:current-user', request=request, format=format),            
+        })
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """

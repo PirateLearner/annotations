@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^annotations/', include('annotations.urls', namespace='annotations')),
     url(r'^blogging/', include('blogging.urls',namespace='blogging')),
     url(r'^$', 'demo.views.home', name='home'),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
