@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.contrib.contenttypes.models import ContentType
 
 from django.contrib.auth.models import User
@@ -9,6 +9,7 @@ from annotations.models import AnnotationShareMap, Annotation
 
 import json
 from django.core import serializers
+from rest_framework import status
 
 # Create your views here.
 """
@@ -87,7 +88,7 @@ def api_root(request, format=None):
     return Response({
         'blogcontent': reverse('annotations:blogcontent-list', request=request, format=format),
         'user': reverse('annotations:user-list', request=request, format=format),
-        'annotations': reverse('annotations:annotation-list', request=request, format=format),
+        'annotations-list': reverse('annotations:annotation-list', request=request, format=format),
         'currentUser': reverse('annotations:current-user', request=request, format=format),            
         })
 
@@ -112,7 +113,7 @@ class BlogContentViewSet(viewsets.ModelViewSet):
         obj.author_id = self.request.user
 
         
-
+'''
 class AnnotationViewSet(viewsets.ModelViewSet):
     
     queryset = Annotation.objects.all()
@@ -121,10 +122,72 @@ class AnnotationViewSet(viewsets.ModelViewSet):
     
     def pre_save(self, obj):
         obj.user = self.request.user
+'''
         
+from rest_framework.views import APIView
+        
+class AnnotationViewList(APIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, AnnotationIsOwnerOrReadOnly,)
+    def get(self, request, format=None):
+        annotations = Annotation.objects.all()
+        serializer = AnnotationSerializer(annotations, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request, format=None):
+        print 'Inside POST'
+        serializer = AnnotationSerializer(data=request.data)
+        if serializer.is_valid():
+            #serializer.save(commit=False) 
+            serializer.save()
+            for user in serializer.validated_data().get('shared_with'):
+                print str(user)
+                sharing = AnnotationShareMap(annotation=serializer.instance, 
+                                                        user=user)
+                sharing.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+    def pre_save(self, obj):
+        obj.author_id = self.request.user
+        
+class AnnotationViewDetail(APIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, AnnotationIsOwnerOrReadOnly,)
+    
+    def get_object(self, pk):
+        try:
+            return Annotation.objects.get(pk=pk)
+        except Annotation.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, pk, format=None):
+        annotation = self.get_object(pk)
+        serializer = AnnotationSerializer(annotation)
+        return Response(serializer.data)
+    
+    def put(self, request, pk, format=None):
+        annotation = self.get_object(pk)
+        serializer = AnnotationSerializer(annotation, data=request.data)
+        if serializer.is_valid():
+            serializer.save(commit=False) 
+            serializer.save()
+            for user in serializer.validated_data().get('shared_with'):
+                sharing = AnnotationShareMap(annotation=serializer.instance, 
+                                                        user=user)
+                sharing.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk, format=None):
+        annotation = self.get_object(pk)
+        annotation.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def pre_save(self, obj):
+        obj.author_id = self.request.user
+
 # From hence, all models are representation of things that don't actually exist
 
-from rest_framework.views import APIView
+
 
 class BlogContentCommentView(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
