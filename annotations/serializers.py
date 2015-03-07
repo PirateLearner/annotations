@@ -8,6 +8,7 @@ from annotations.models import Annotation, AnnotationShareMap
 from blogging.models import BlogContent
 from django.contrib.auth.models import User
 
+from django.contrib.contenttypes.models import ContentType
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,7 +23,7 @@ class AnonymousUserSerializer(serializers.Serializer):
 class BlogContentSerializer(serializers.ModelSerializer):
     #Tell BlogContent that it has a relation on Annotations    
     #annotation = BlogContentGenericField()
-    #annotation = serializers.RelatedField(many=True, queryset=Annotation.objects.all())
+    annotation = serializers.RelatedField(many=True, queryset=Annotation.objects.all())
     
     class Meta:
         model = BlogContent
@@ -54,13 +55,58 @@ class AnnotationSerializer(serializers.ModelSerializer):
                   'author', 'shared_with',
                   'privacy', 'privacy_override', )  
     
-    def save(self, *args, **kwargs):
-        print 'In save'
-        #print str(self)
-        users = self.validated_data.get('shared_with')
-        super(AnnotationSerializer, self).save(commit=False, *args, **kwargs)
-        for user in users:
-            print user
-            sharing = AnnotationShareMap(annotation=self.instance, 
+    def create(self, validated_data):
+        print "In create"
+        print validated_data
+        annotation = Annotation()
+        annotation.author = validated_data.get('author')
+        annotation.body = validated_data.get('body')
+        annotation.content_type = validated_data.get('content_type')
+        annotation.object_id = validated_data.get('object_id')
+        annotation.paragraph = validated_data.get('paragraph')
+        
+        annotation.privacy = validated_data.get('privacy')
+        annotation.privacy_override = validated_data.get('privacy_override')
+
+        #Get row from contentType which has content_type
+        content_object = ContentType.objects.get_for_id(annotation.content_type.id)
+        
+        annotation.content_object = content_object.model_class().objects.get(id=annotation.object_id)
+        
+        print annotation.content_object          
+        annotation.save()
+
+        print validated_data.get('shared_with')
+        for user in validated_data.get('shared_with'):
+            sharing = AnnotationShareMap(annotation=annotation, 
                                                     user=user)
-            sharing.save() 
+            sharing.save()
+        
+        return annotation
+    
+    def update(self, instance, validated_data):
+        print "In update"
+        annotation = instance
+        annotation.author = validated_data.get('author', annotation.author)
+        annotation.body = validated_data.get('body', annotation.body)
+        annotation.content_type = validated_data.get('content_type',annotation.content_type)
+        annotation.object_id = validated_data.get('object_id',annotation.object_id)
+        annotation.paragraph = validated_data.get('paragraph',annotation.paragraph)
+        
+        annotation.privacy = validated_data.get('privacy',annotation.privacy)
+        annotation.privacy_override = validated_data.get('privacy_override',annotation.privacy_override)
+
+        #Get row from contentType which has content_type
+        content_object = ContentType.objects.get_for_id(annotation.content_type.id)        
+        annotation.content_object = content_object.model_class().objects.get(id=annotation.object_id)        
+        
+        print annotation.content_object     
+                
+        annotation.save()
+        
+        print validated_data.get('shared_with')
+        for user in validated_data.get('shared_with'):
+            sharing = AnnotationShareMap(annotation=annotation, 
+                                                    user=user)
+            sharing.save()
+        return annotation

@@ -113,7 +113,7 @@ class BlogContentViewSet(viewsets.ModelViewSet):
         obj.author_id = self.request.user
 
         
-'''
+
 class AnnotationViewSet(viewsets.ModelViewSet):
     
     queryset = Annotation.objects.all()
@@ -122,10 +122,10 @@ class AnnotationViewSet(viewsets.ModelViewSet):
     
     def pre_save(self, obj):
         obj.user = self.request.user
-'''
+
         
 from rest_framework.views import APIView
-        
+'''        
 class AnnotationViewList(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, AnnotationIsOwnerOrReadOnly,)
     def get(self, request, format=None):
@@ -139,16 +139,9 @@ class AnnotationViewList(APIView):
         if serializer.is_valid():
             #serializer.save(commit=False) 
             serializer.save()
-            for user in serializer.validated_data().get('shared_with'):
-                print str(user)
-                sharing = AnnotationShareMap(annotation=serializer.instance, 
-                                                        user=user)
-                sharing.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
-    def pre_save(self, obj):
-        obj.author_id = self.request.user
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+               
         
 class AnnotationViewDetail(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, AnnotationIsOwnerOrReadOnly,)
@@ -182,8 +175,7 @@ class AnnotationViewDetail(APIView):
         annotation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def pre_save(self, obj):
-        obj.author_id = self.request.user
+'''
 
 # From hence, all models are representation of things that don't actually exist
 

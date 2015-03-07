@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.core.urlresolvers import resolve
 #from annotations.views import home
 
-from annotations.models import Annotation
+from annotations.models import Annotation, AnnotationShareMap
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -216,12 +216,18 @@ class TestSerializers(TestAnnotations):
         #Expect a JSON object in response
         
         #Try to get all the annotations. Count should be 1, and it must be ours.
+        print "Response"
         print response.content.decode()       
         self.assertEqual(Annotation.objects.all().count(), 1)
         annotation = Annotation.objects.all()[0]
+        print 'Annotation content_object'
+        print annotation.content_object
         self.assertEqual(annotation.body, 'Dreaming is good, day dreaming, not so good.')
         self.assertEqual(annotation.paragraph, 1)
-            
+        
+        map = AnnotationShareMap.objects.all()
+        for share in map:
+            print str(share)
         #check if the redirected page is the same as previous one        
         #the response MUST contain the annotation we just posted
 

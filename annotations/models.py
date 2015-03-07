@@ -73,5 +73,11 @@ class AnnotationShareMap(models.Model):
     notified_flag = models.BooleanField(default = False)
     objects = AnnotationShareManager()
     
+    def __unicode__(self):
+        return str(self.annotation) + ' shared with ' + str(self.user)
+    
+    def __str__(self):
+        return str(self.annotation) + ' shared with ' + str(self.user)
+    
     class Meta:
         app_label = 'annotations'   
