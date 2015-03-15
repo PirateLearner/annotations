@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from rest_framework.fields import ReadOnlyField
 
-from rest_framework.relations import HyperlinkedRelatedField,PrimaryKeyRelatedField
-
 from annotations.models import Annotation, AnnotationShareMap
 
 from blogging.models import BlogContent
@@ -11,43 +9,51 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
 class UserSerializer(serializers.ModelSerializer):
+    
+    annotations = serializers.PrimaryKeyRelatedField(many=True, 
+                                                     queryset=Annotation.objects.all())
+    
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name')
+        fields = ('id', 'username', 'first_name', 'last_name', 'annotations')
         
         
 class AnonymousUserSerializer(serializers.Serializer):
     username = serializers.CharField();
 
-
-class BlogContentSerializer(serializers.ModelSerializer):
-    #Tell BlogContent that it has a relation on Annotations    
-    #annotation = BlogContentGenericField()
-    annotation = serializers.RelatedField(many=True, queryset=Annotation.objects.all())
-    
-    class Meta:
-        model = BlogContent
-        fields =('id', 'title', 'create_date', 'data', 'url_path', 
-                 'author_id', 'published_flag', 'section', 'content_type',
-                 )
-        
 class SerializeReadOnlyField(ReadOnlyField):
     
     def to_representation(self, value):
         if isinstance(value, BlogContent):
             return value.get_absolute_url()
 
-class AnnotationShareMapSerializer(serializers.ModelSerializer):
+
+class BlogContentSerializer(serializers.ModelSerializer):
+    #Tell BlogContent that it has a relation on Annotations    
+    #annotation = BlogContentGenericField()
+    annotation = SerializeReadOnlyField()
     
+    class Meta:
+        model = BlogContent
+        fields =('id', 'title', 'create_date', 'data', 'url_path', 
+                 'author_id', 'published_flag', 'section', 'content_type',
+                 'annotation',)
+        
+
+
+class AnnotationShareMapSerializer(serializers.ModelSerializer):    
     class Meta:
         model=AnnotationShareMap
         fields = ('user','annotation', 'notified_flag')    
 
+
+
 class AnnotationSerializer(serializers.ModelSerializer):
-    content_object = SerializeReadOnlyField() 
-    #shared_with = HyperlinkedRelatedField(many=True,read_only=False, view_name='user-detail', queryset=AnnotationShareMap.objects.all())
-    #shared_with = AnnotationShareMapSerializer()
-    shared_with = PrimaryKeyRelatedField(many=True, read_only=False, queryset=User.objects.all())
+    #I want the content object is a hyperlink to the ContentObject
+    content_object = SerializeReadOnlyField()
+    
+    shared_with = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=User.objects.all())
+    author = serializers.ReadOnlyField(source='author.username')
     class Meta:
         model = Annotation
         fields = ('content_type', 'object_id', 'id',  'date_created', 'date_modified','content_object',
@@ -66,7 +72,7 @@ class AnnotationSerializer(serializers.ModelSerializer):
         annotation.paragraph = validated_data.get('paragraph')
         
         annotation.privacy = validated_data.get('privacy')
-        annotation.privacy_override = validated_data.get('privacy_override')
+        annotation.privacy_override = validated_data.get('privacy_override', False)
 
         #Get row from contentType which has content_type
         content_object = ContentType.objects.get_for_id(annotation.content_type.id)

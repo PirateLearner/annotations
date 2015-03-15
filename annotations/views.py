@@ -92,13 +92,26 @@ def api_root(request, format=None):
         'currentUser': reverse('annotations:current-user', request=request, format=format),            
         })
 
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    
+
+'''
+from rest_framework import generics
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer        
+'''
+        
 class BlogContentViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
@@ -109,20 +122,17 @@ class BlogContentViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly,)
 
-    def pre_save(self, obj):
-        obj.author_id = self.request.user
-
         
 
 class AnnotationViewSet(viewsets.ModelViewSet):
     
     queryset = Annotation.objects.all()
     serializer_class = AnnotationSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, AnnotationIsOwnerOrReadOnly,)
-    
-    def pre_save(self, obj):
-        obj.user = self.request.user
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, 
+                          AnnotationIsOwnerOrReadOnly,)
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
         
 from rest_framework.views import APIView
 '''        
