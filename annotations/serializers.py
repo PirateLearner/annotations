@@ -12,10 +12,19 @@ class UserSerializer(serializers.ModelSerializer):
     
     annotations = serializers.PrimaryKeyRelatedField(many=True, 
                                                      queryset=Annotation.objects.all())
+    gravatar = serializers.SerializerMethodField()
+    url = serializers.SerializerMethodField()
     
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'annotations')
+        fields = ('id', 'username', 'first_name', 'last_name', 'annotations', 'gravatar', 'url',)
+        
+    def get_gravatar(self, obj):
+        return '#'
+    
+    def get_url(self, obj):
+        return '#'
+        
         
         
 class AnonymousUserSerializer(serializers.Serializer):
@@ -27,19 +36,38 @@ class SerializeReadOnlyField(ReadOnlyField):
         if isinstance(value, BlogContent):
             return value.get_absolute_url()
 
-
+class SerializeAnnotationsField(serializers.SerializerMethodField):
+    
+    def to_representation(self, value):
+        print 'to_repr'
+        print type(value)
+        if isinstance(value, Annotation):
+            return AnnotationSerializer(value)
+        if isinstance(value, dict):
+            print 'Is annotation'
+            return AnnotationSerializer(value, many=True)
+        
 class BlogContentSerializer(serializers.ModelSerializer):
     #Tell BlogContent that it has a relation on Annotations    
-    #annotation = BlogContentGenericField()
-    annotation = SerializeReadOnlyField()
+    annotation = serializers.SerializerMethodField()
+    #annotation = SerializeAnnotationsField()
     
     class Meta:
         model = BlogContent
         fields =('id', 'title', 'create_date', 'data', 'url_path', 
                  'author_id', 'published_flag', 'section', 'content_type',
                  'annotation',)
-        
-
+     
+    def get_annotation(self, obj):
+        content_object = ContentType.objects.get_for_model(obj)
+        print "In BlogContentSerializer"
+        print obj
+        annotations =  Annotation.objects.filter(content_type=content_object.id, object_id=obj.id)
+        if len(annotations) is not 0:
+            print AnnotationSerializer(annotations, many=True).data
+            return (AnnotationSerializer(annotations, many=True).data)
+        else:
+            return None
 
 class AnnotationShareMapSerializer(serializers.ModelSerializer):    
     class Meta:
@@ -53,7 +81,8 @@ class AnnotationSerializer(serializers.ModelSerializer):
     content_object = SerializeReadOnlyField()
     
     shared_with = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=User.objects.all())
-    author = serializers.ReadOnlyField(source='author.username')
+    #author = serializers.ReadOnlyField(source='author.username')
+    author = UserSerializer(read_only=True)
     class Meta:
         model = Annotation
         fields = ('content_type', 'object_id', 'id',  'date_created', 'date_modified','content_object',

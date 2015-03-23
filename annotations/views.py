@@ -198,7 +198,7 @@ class BlogContentCommentView(APIView):
         obj = BlogContent.objects.get(pk=pk)
         #Then, get the content type instance
         content_type = ContentType.objects.get_for_model(obj)
-        annotations = Annotation.objects.filter(content_type= content_type.id, object_pk=obj.id)
+        annotations = Annotation.objects.filter(content_type= content_type.id, object_id=obj.id)
         print annotations
         
         #Now, put them into a serializer

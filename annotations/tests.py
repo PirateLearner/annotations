@@ -29,6 +29,8 @@ class TestAnnotations(TestCase):
         self.user = User.objects.get(username="craft")
         token = Token.objects.create(user=self.user)
         token.save()
+        self.factory = APIRequestFactory()
+        self.client = APIClient()
         
     def tearDown(self):
         pass
@@ -188,12 +190,30 @@ class TestSerializers(TestAnnotations):
         response = self.client.get('/annotations/annotations/')
         #print 'response'
         #print response.content.decode()
-        
-    def test_PUT_annotation(self):
+    
+    def _create_annotation(self, content=None):
         #use test client to POST a request
         self._require_login()
         print(self.user.is_authenticated()) # returns True
         string_data = {
+                    'content_type': content['content_type'],
+                    'object_id':content['object_id'],
+                    'paragraph':content['paragraph'],
+                    'body': content['body'],
+                    #'author':content['author'],
+                    'privacy':content['privacy'],
+                    'privacy_override': content['privacy_override'],
+                    'shared_with': content['shared_with'],
+                    }
+        json_data = json.dumps(string_data)
+        return self.client.post(
+            '/annotations/annotations/',
+            content_type='application/json',
+            data = json_data,
+         )
+        
+    def test_POST_annotation(self):
+        response = self._create_annotation(content={
                     'content_type': '9',
                     'object_id':'1',
                     'paragraph':'1',
@@ -202,13 +222,7 @@ class TestSerializers(TestAnnotations):
                     'privacy':'3',
                     'privacy_override': '0',
                     'shared_with': ['1'],
-                    }
-        json_data = json.dumps(string_data)
-        response = self.client.post(
-            '/annotations/annotations/',
-            content_type='application/json',
-            data = json_data,
-         )
+                    })
         
         #the result must redirect to the same page but not reload the same page (for now)
         #self.assertRedirects(response, '/blogging/articles/i-have-a-dream-by-martin-luther-king/1/')
@@ -220,8 +234,8 @@ class TestSerializers(TestAnnotations):
         print response.content.decode()       
         self.assertEqual(Annotation.objects.all().count(), 1)
         annotation = Annotation.objects.all()[0]
-        print 'Annotation content_object'
-        print annotation.content_object
+        #print 'Annotation content_object'
+        #print annotation.content_object
         self.assertEqual(annotation.body, 'Dreaming is good, day dreaming, not so good.')
         self.assertEqual(annotation.paragraph, 1)
         
@@ -231,6 +245,67 @@ class TestSerializers(TestAnnotations):
         #check if the redirected page is the same as previous one        
         #the response MUST contain the annotation we just posted
 
+    def test_PUT_annotation(self):
+        self._create_annotation(content={
+                    'content_type': '9',
+                    'object_id':'1',
+                    'paragraph':'1',
+                    'body':'Dreaming is good, day dreaming, not so good.',
+                    'author':str(self.user.id),
+                    'privacy':'3',
+                    'privacy_override': '0',
+                    'shared_with': ['1'],
+                    })
+        #Update the annotation    
+        annotation = Annotation.objects.all()[0]
+        string_data = {
+                    'content_type': '9',
+                    'object_id':'1',
+                    'paragraph':'1',
+                    'body':'This is the updated annotation',
+                    'author':str(self.user.id),
+                    'privacy':'3',
+                    'privacy_override': '0',
+                    'shared_with': ['1'],
+                    }
+        json_data = json.dumps(string_data)
+        url = '/annotations/annotations/'+ str(annotation.id)+'/'
+        response = self.client.put(
+            url,
+            content_type='application/json',
+            data = json_data,
+         )
+        
+        print "Response"
+        print response.content.decode()       
+        self.assertEqual(Annotation.objects.all().count(), 1)
+        annotation = Annotation.objects.all()[0]
+        #print 'Annotation content_object'
+        #print annotation.content_object
+
+        self.assertEqual(annotation.body, 'This is the updated annotation')
+        self.assertEqual(annotation.paragraph, 1)
+    
+    def test_DELETE_annotation(self):
+        self._create_annotation(content={
+                    'content_type': '9',
+                    'object_id':'1',
+                    'paragraph':'1',
+                    'body':'Dreaming is good, day dreaming, not so good.',
+                    'author':str(self.user.id),
+                    'privacy':'3',
+                    'privacy_override': '0',
+                    'shared_with': ['1'],
+                    })
+        annotation = Annotation.objects.all()[0]
+        url = '/annotations/annotations/'+ str(annotation.id)+'/'
+        response = self.client.delete(url, content_type='application/json', data={})
+        #print "Response"
+        #print response.content.decode()       
+        self.assertEqual(Annotation.objects.all().count(), 0)
+ 
+ 
+    
 #This test demonstates gow to login in testCases 
 #http://stackoverflow.com/questions/20528798/testing-authentication-in-django-rest-framework-views-cannot-authenticate-whe
 
