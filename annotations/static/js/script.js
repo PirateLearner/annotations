@@ -124,6 +124,51 @@ $(document).ready(function(){
 								url: "#",
 							};
 	
+	var getCurrentUser = function(){
+		
+	    $.ajaxSetup({
+	        beforeSend: function(xhr, settings) {
+	            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+	                xhr.setRequestHeader("X-CSRFToken", annotations.csrftoken);
+	            }
+	        }
+	    });
+	    //Save Form Data........
+	    $.ajax({
+	        cache: false,
+	        url : "/annotations/users/current/",
+	        type: "GET",
+	        dataType : "json",
+	        
+	        success : function(data){
+	        	if(!('id' in data)){
+	        		annotations.currentUser = {
+							id: "0",
+							username: "Guest",
+							gravatar: "images/male.png",
+							url: "#",
+						};
+	        	}
+	        	else{
+	        	annotations.currentUser = {
+						id: data['id'],
+						username: data['username'],
+						gravatar: data['gravatar'],
+						url: "#",
+					};
+	        	}
+	        	
+	        	//console.log(annotations.currentUser);
+	        },
+	        error : function (xhRequest, ErrorText, thrownError) {
+	            //alert("Failed to process annotation correctly, please try again");
+	            console.log('xhRequest: ' + xhRequest + "\n");
+	            console.log('ErrorText: ' + ErrorText + "\n");
+	            console.log('thrownError: ' + thrownError + "\n");
+	        }
+	    });	
+	};
+	
 	annotations.formElement = $('<div class="comments-form-block">'+
                         '<form class="comments-form" id="annotation_form">'+
                             '<textarea id="comments-form-text" class="comments-form--user-input"'+ 
@@ -140,14 +185,14 @@ $(document).ready(function(){
 	 * @brief Attaches the form to the current content block
 	 */
 	var showForm = function(id){
-		console.log('Show form in '+id);
+		//console.log('Show form in '+id);
 		
-		console.log($('.comments-form-block'));
+		//console.log($('.comments-form-block'));
 		if($('.comments-form-block').length != 0){
 			/* The form has been attached somewhere. */
 			/* Clear out form contents, if any. */
 			
-			console.log('Attached elsewhere');
+			//console.log('Attached elsewhere');
 			annotations.formElement.find($('#comments-form-text')).val('');
 			
 			if(parseInt($('.comments-form-block').parent('.annotation--container').attr('data-section-id'))!=id){
@@ -165,7 +210,7 @@ $(document).ready(function(){
 	};
 	
 	var hideForm = function(){
-		console.log('Hide Form');
+		//console.log('Hide Form');
 		if($('.comments-form-block').length >0){
 			annotations.formElement = $('.comments-form-block');
 			/*
@@ -184,17 +229,17 @@ $(document).ready(function(){
 	 * renderAnnotation method as if the server responded with a valid response.
 	 */
 	var postAnnotation = function(e){
-		console.log('postAnnotation');
+		//console.log('postAnnotation');
 		/* Construct a JSON string of the data in annotation. */
-		console.log(this);
+		//console.log(this);
 		
 		/* First find the parent's para-id */
 		id = parseInt($(this).parents(".annotation--container").attr("data-section-id"));
-		console.log("Para ID: "+ id);
+		//console.log("Para ID: "+ id);
 		
 		/* Current text must not be empty. Though this must be taken care of in HTML5 required flag*/
 		body = $("#comments-form-text").val();
-		console.log(body);
+		//console.log(body);
 		if(body === ''){
 			console.log('Error. Body has no content.')
 			return;
@@ -282,8 +327,8 @@ $(document).ready(function(){
 	 * @param data
 	 */
 	var removeAnnotation = function(data){
-		console.log('Remove Annotation response');
-		console.log(data);
+		//console.log('Remove Annotation response');
+		//console.log(data);
 	};
 	
 	/**
@@ -292,7 +337,7 @@ $(document).ready(function(){
 	 */
 	var deleteAnnotation = function(id){
 		id= parseInt($(this).attr('data-comment-id'));
-		console.log('Deleting annotation' + id);
+		//console.log('Deleting annotation' + id);
 		
 		$.ajaxSetup({
 	        beforeSend: function(xhr, settings) {
@@ -320,9 +365,9 @@ $(document).ready(function(){
 	    });	
 	    
 	    /* Update annotation count on adjoining container */
-	    console.log($(this).closest('.comments').find('.comments--toggle p'));
+	    //console.log($(this).closest('.comments').find('.comments--toggle p'));
 	    commentCount = parseInt($(this).closest('.comments').find('.comments--toggle p').text());
-	    console.log('Comment Count now is '+ commentCount);
+	    //console.log('Comment Count now is '+ commentCount);
 	    if((commentCount -1)==0){
 	    	$(this).closest('.comments').find('.comments--toggle p').text('+');
 	    }
@@ -351,15 +396,15 @@ $(document).ready(function(){
 	 * 
 	 */
 	var renderAnnotations = function(data){
-		console.log('renderAnnotations');
-		console.log('Data received: ');
-		console.log(data);
-		console.log('Length: '+ data.length);
+		//console.log('renderAnnotations');
+		//console.log('Data received: ');
+		//console.log(data);
+		//console.log('Length: '+ data.length);
 		if (annotationCopy == null){
 			/* Create a fresh copy of the variable*/
-			console.log('It is null. Make a new one');
+			//console.log('It is null. Make a new one');
 			annotationCopy = $('#commentable-container');
-			console.log(annotationCopy);
+			//console.log(annotationCopy);
 		}
 		for(i=0; i< data.length;i++){
 //			console.log(annotationCopy.children('[data-section-id="'+data[i]['paragraph_id']+'"]'));
@@ -375,7 +420,7 @@ $(document).ready(function(){
             					'<a class="comments-author-link" href="#"><span class="comments-author-name"></span></a>'+
             					'<span class="comments-container--text"></span>'+
             					'<div class="comments-control-box">'+
-
+            					'<span class="comments-control comments-delete">Delete</span>'+
             					'<span class="comments-control">Shared with</span>'+
             					'</div>'+
             					'<span class="comments-delete glyphicon glyphicon-remove"></span>'+
@@ -390,7 +435,6 @@ $(document).ready(function(){
 			currentComment.find('.comments-delete').attr('data-comment-id', data[i]['id']);
 			
 			currentComment.find('.comments-delete').on('click', deleteAnnotation);
-			currentComment.find('.comments-delete').on('click', deleteAnnotation);
 			/* Also add to main container if the user is a guest. */
 			if((parseInt(data[i]['author']['id']) === parseInt(annotations.currentUser['id']))||
 					(parseInt(annotations.currentUser['id'])===0)){
@@ -401,9 +445,13 @@ $(document).ready(function(){
 				/* Append to the folded list */
 				currentObject.find('[id *="other_annotations_"]').append(currentComment);
 				/* Now that we have other annotations, unhide the show button too */
-				currentObject.find('.comments-bucket-toggle').show();
-				/* Bind event to show fold or unfold other annotations*/
-				currentObject.find('.comments-bucket-toggle').on('click', toggleOtherAnnotations);
+				console.log('Unhide the button');
+				
+				if(currentObject.find('.comments-bucket-toggle').hasClass('hidden')){
+					currentObject.find('.comments-bucket-toggle').removeClass('hidden');
+					/* Bind event to show fold or unfold other annotations*/
+					currentObject.find('.comments-bucket-toggle').on('click', toggleOtherAnnotations);
+				}				
 				
 				if(!currentObject.find('.comments-bucket-toggle').hasClass('unfolded')){
 					currentObject.find('.comments-bucket-toggle').removeClass('unfolded');
@@ -415,15 +463,15 @@ $(document).ready(function(){
 			
 			/* Update the annotation count on the button */
 			temp = currentObject.find('.comments--toggle p').text();
-			console.log('Comment Count is ' +temp);
+			//console.log('Comment Count is ' +temp);
 			commentCount = ((temp = currentObject.find('.comments--toggle p').text()) ==='+') ? 1 : (parseInt(temp)+1);
-			console.log(currentObject.find('.comments-container'));
+			//console.log(currentObject.find('.comments-container'));
 			currentObject.find('.comments--toggle p').text(commentCount);
 			if(!currentObject.find('.comments--toggle').hasClass('has-annotations') && commentCount > 0)
 			{
 				currentObject.find('.comments--toggle').addClass('has-annotations');
 			}
-			console.log('Updated comment count to '+ commentCount);
+			//console.log('Updated comment count to '+ commentCount);
 		}
 		/* Put the variable back to sleep now */
 		annotationCopy = null;
@@ -628,4 +676,7 @@ $(document).ready(function(){
  
         e.preventDefault();
     });
+	
+	/* Get the current user */
+	getCurrentUser();
 });
