@@ -1,87 +1,173 @@
 $(document).ready(function(){
-	
+		
 	var fixtures = {};
 	
 	fixtures = [
 		             	{
-							content_id: "1",
-							paragraph_id: "1",
-							annotation_body: "Lorem Ipsum",
-							user : {
-								user_id: "1",
-								user_name: "John Doe",
-								user_gravatar: "images/male.png",
-								user_url: "#",
+							content_type: "9",
+							object_id: "1",
+							paragraph: "1",
+							body: "Lorem Ipsum",
+							privacy: "3",
+							privacy_override:"0",
+							author : {
+								id: "1",
+								username: "John Doe",
+								gravatar: "images/male.png",
+								url: "#",
 									},
+							shared_with: ["1"],
 		             	},
 						{	
-							content_id: "1",
-							paragraph_id: "1",
-							annotation_body: "Your documentation source should be written as regular Markdown files, and placed in a directory somewhere in your project."+ 
+		             		content_type: "9",
+							object_id: "1",
+							paragraph: "1",
+							body: "Your documentation source should be written as regular Markdown files, and placed in a directory somewhere in your project."+ 
 	                                         "Normally this directory will be named docs and will exist at the top level of your project,alongside the mkdocs.yml configuration file.",
-							user : {
-								user_id: "2",
-								user_name: "Someone Else",
-								user_gravatar: "images/female.png",
-								user_url: "#",
+ 							privacy: "3",
+							privacy_override:"0",
+							author : {
+								id: "2",
+								username: "Someone Else",
+								gravatar: "images/female.png",
+								url: "#",
 									},
 						},
 						{	
-							content_id: "1",
-							paragraph_id: "6",
-							annotation_body: "But we have to make tradeoffs to make something work",
-							user : {
-								user_id: "1",
-								user_name: "John Doe",
-								user_gravatar: "images/male.png",
-								user_url: "#",
+							content_type: "9",
+							object_id: "1",
+							paragraph: "6",
+							body: "But we have to make tradeoffs to make something work",
+							privacy: "3",
+							privacy_override:"0",
+							author : {
+								id: "1",
+								username: "John Doe",
+								gravatar: "images/male.png",
+								url: "#",
 									},
 						},
 						{	
-							content_id: "1",
-							paragraph_id: "5",
-							annotation_body: "Lorem Ipsum",
-							user : {
-								user_id: "1",
-								user_name: "John Doe",
-								user_gravatar: "images/male.png",
-								user_url: "#",
+							content_type: "9",
+							object_id: "1",
+							paragraph: "5",
+							body: "Lorem Ipsum",
+							privacy: "3",
+							privacy_override:"0",
+							author : {
+								id: "1",
+								username: "John Doe",
+								gravatar: "images/male.png",
+								url: "#",
 									},
 						},
 						{	
-							content_id: "1",
-							paragraph_id: "5",
-							annotation_body: "But we have to make tradeoffs to make something work",
-							user : {
-								user_id: "2",
-								user_name: "Someone Else",
-								user_gravatar: "images/female.png",
-								user_url: "#",
+							content_type: "9",
+							object_id: "1",
+							paragraph: "5",
+							body: "But we have to make tradeoffs to make something work",
+							privacy: "3",
+							privacy_override:"0",
+							author : {
+								id: "2",
+								username: "Someone Else",
+								gravatar: "images/female.png",
+								url: "#",
 									},
 						},
 						{	
-							content_id: "1",
-							paragraph_id: "3",
-							annotation_body: "Lorem Ipsum",
-							user : {
-								user_id: "1",
-								user_name: "John Doe",
-								user_gravatar: "images/male.png",
-								user_url: "#",
+							content_type: "9",
+							object_id: "1",
+							paragraph: "3",
+							body: "Lorem Ipsum",
+							privacy: "3",
+							privacy_override:"0",
+							author : {
+								id: "1",
+								username: "John Doe",
+								gravatar: "images/male.png",
+								url: "#",
 									},
 						}
 					];
 	
-		
+	
+	var getCookie = function(name){
+	    var cookieValue = null;
+	    if (document.cookie && document.cookie != '') {
+	        var cookies = document.cookie.split(';');
+	        for (var i = 0; i < cookies.length; i++) {
+	            var cookie = jQuery.trim(cookies[i]);
+	            // Does this cookie string begin with the name we want?
+	            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+	                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+	                break;
+	            }
+	        }
+	    }
+	    return cookieValue;
+	};
+	
+	var csrfSafeMethod = function(method) {
+	    // these HTTP methods do not require CSRF protection
+	    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+	};
+	
 	var annotations = {};
+	annotations.csrftoken = getCookie('csrftoken');
 	annotations.currentAnnotation = 0;
 		
 	annotations.currentUser = {
-								user_id: "0",
-								user_name: "John Doe",
-								user_gravatar: "images/male.png",
-								user_url: "#",
+								id: "0",
+								username: "John Doe",
+								gravatar: "images/male.png",
+								url: "#",
 							};
+	
+	var getCurrentUser = function(){
+		
+	    $.ajaxSetup({
+	        beforeSend: function(xhr, settings) {
+	            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+	                xhr.setRequestHeader("X-CSRFToken", annotations.csrftoken);
+	            }
+	        }
+	    });
+	    //Save Form Data........
+	    $.ajax({
+	        cache: false,
+	        url : "/annotations/users/current/",
+	        type: "GET",
+	        dataType : "json",
+	        
+	        success : function(data){
+	        	if(!('id' in data)){
+	        		annotations.currentUser = {
+							id: "0",
+							username: "Guest",
+							gravatar: "images/male.png",
+							url: "#",
+						};
+	        	}
+	        	else{
+	        	annotations.currentUser = {
+						id: data['id'],
+						username: data['username'],
+						gravatar: data['gravatar'],
+						url: "#",
+					};
+	        	}
+	        	
+	        	//console.log(annotations.currentUser);
+	        },
+	        error : function (xhRequest, ErrorText, thrownError) {
+	            //alert("Failed to process annotation correctly, please try again");
+	            console.log('xhRequest: ' + xhRequest + "\n");
+	            console.log('ErrorText: ' + ErrorText + "\n");
+	            console.log('thrownError: ' + thrownError + "\n");
+	        }
+	    });	
+	};
 	
 	annotations.formElement = $('<div class="comments-form-block">'+
                         '<form class="comments-form" id="annotation_form">'+
@@ -99,14 +185,14 @@ $(document).ready(function(){
 	 * @brief Attaches the form to the current content block
 	 */
 	var showForm = function(id){
-		console.log('Show form in '+id);
+		//console.log('Show form in '+id);
 		
-		console.log($('.comments-form-block'));
+		//console.log($('.comments-form-block'));
 		if($('.comments-form-block').length != 0){
 			/* The form has been attached somewhere. */
 			/* Clear out form contents, if any. */
 			
-			console.log('Attached elsewhere');
+			//console.log('Attached elsewhere');
 			annotations.formElement.find($('#comments-form-text')).val('');
 			
 			if(parseInt($('.comments-form-block').parent('.annotation--container').attr('data-section-id'))!=id){
@@ -124,7 +210,7 @@ $(document).ready(function(){
 	};
 	
 	var hideForm = function(){
-		console.log('Hide Form');
+		//console.log('Hide Form');
 		if($('.comments-form-block').length >0){
 			annotations.formElement = $('.comments-form-block');
 			/*
@@ -143,34 +229,81 @@ $(document).ready(function(){
 	 * renderAnnotation method as if the server responded with a valid response.
 	 */
 	var postAnnotation = function(e){
-		console.log('postAnnotation');
+		//console.log('postAnnotation');
 		/* Construct a JSON string of the data in annotation. */
-		console.log(this);
+		//console.log(this);
 		
 		/* First find the parent's para-id */
 		id = parseInt($(this).parents(".annotation--container").attr("data-section-id"));
-		console.log("Para ID: "+ id);
+		//console.log("Para ID: "+ id);
 		
 		/* Current text must not be empty. Though this must be taken care of in HTML5 required flag*/
 		body = $("#comments-form-text").val();
-		console.log(body);
+		//console.log(body);
 		if(body === ''){
 			console.log('Error. Body has no content.')
 			return;
 		}
 		
+		data = {
+				body: body,
+				paragraph: id,
+				content_type: "9",
+				object_id: "1",
+				privacy: "3",
+				privacy_override:"0",
+				shared_with: [],
+			};
+		
+		/* POST it now! */
+		//Form Validation goes here....
+
+	    $.ajaxSetup({
+	        beforeSend: function(xhr, settings) {
+	            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+	                xhr.setRequestHeader("X-CSRFToken", annotations.csrftoken);
+	            }
+	        }
+	    });
+	    //Save Form Data........
+	    $.ajax({
+	        cache: false,
+	        url : "http://127.0.0.1:8000/annotations/annotations/",
+	        type: "POST",
+	        dataType : "json",
+	        contentType: "application/json;",
+	        data : JSON.stringify(data),
+	        context : this,
+	        success : renderSingleAnnotation,
+	        error : function (xhRequest, ErrorText, thrownError) {
+	            //alert("Failed to process annotation correctly, please try again");
+	            console.log('xhRequest: ' + xhRequest + "\n");
+	            console.log('ErrorText: ' + ErrorText + "\n");
+	            console.log('thrownError: ' + thrownError + "\n");
+	        }
+	    });	
+		
 		/* create a fixture */
+		/*
 		content = [
 					{
-						content_id: "1",
-						paragraph_id: id,
-						annotation_body: body,
-						user : annotations.currentUser,
+						content_type: "9",
+						object_id: "1",
+						paragraph: id,
+						body: body,
+						privacy: "3",
+						privacy_override:"0",
+						user : {
+							id: "1",
+							username: "John Doe",
+							gravatar: "images/male.png",
+							url: "#",
+								},
 		         	}
 				];
-		
+		*/
 		/* Return object */
-		renderAnnotations(content);
+		//renderAnnotations(content);
 		/* Clear out form contents, if any. */
 		annotations.formElement.find($('#comments-form-text')).val('');
 	}
@@ -189,7 +322,73 @@ $(document).ready(function(){
 		
 	}
 	
+	/**
+	 * removeAnnotation
+	 * @param data
+	 */
+	var removeAnnotation = function(data){
+		//console.log('Remove Annotation response');
+		//console.log(data);
+	};
 	
+	/**
+	 * deleteAnnotation
+	 * @param id: ID of paragraph to remove
+	 */
+	var deleteAnnotation = function(id){
+		id= parseInt($(this).attr('data-comment-id'));
+		//console.log('Deleting annotation' + id);
+		
+		$.ajaxSetup({
+	        beforeSend: function(xhr, settings) {
+	            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+	                xhr.setRequestHeader("X-CSRFToken", annotations.csrftoken);
+	            }
+	        }
+	    });
+	    //Save Form Data........
+	    $.ajax({
+	        cache: false,
+	        url : "http://127.0.0.1:8000/annotations/annotations/"+id+"/",
+	        type: "DELETE",
+	        dataType : "json",
+	        contentType: "application/json;",
+	        //data : JSON.stringify(data),
+	        context : this,
+	        success : removeAnnotation,
+	        error : function (xhRequest, ErrorText, thrownError) {
+	            //alert("Failed to process annotation correctly, please try again");
+	            console.log('xhRequest: ' + xhRequest + "\n");
+	            console.log('ErrorText: ' + ErrorText + "\n");
+	            console.log('thrownError: ' + thrownError + "\n");
+	        }
+	    });	
+	    
+	    /* Update annotation count on adjoining container */
+	    //console.log($(this).closest('.comments').find('.comments--toggle p'));
+	    commentCount = parseInt($(this).closest('.comments').find('.comments--toggle p').text());
+	    //console.log('Comment Count now is '+ commentCount);
+	    if((commentCount -1)==0){
+	    	$(this).closest('.comments').find('.comments--toggle p').text('+');
+	    }
+	    else{
+	    	$(this).closest('.comments').find('.comments--toggle p').text(commentCount -1);
+	    }
+	    
+	    /* Remove the annotation from flow */
+	    $(this).closest('.comments-container-item').remove();
+
+	};
+	/**
+	 * renderSingleAnnotation
+	 * @param data : Payload received from the server
+	 * @brief Loads annotations in their respective containers.
+	 * 
+	 */
+	var renderSingleAnnotation = function(data){
+		data_list = [data];
+		renderAnnotations(data_list);
+	}
 	/**
 	 * renderAnnotations
 	 * @param data : Payload received from the server
@@ -197,14 +396,21 @@ $(document).ready(function(){
 	 * 
 	 */
 	var renderAnnotations = function(data){
-		console.log('renderAnnotations');
-//		console.log('Data received: ');
-//		console.log(data);
-//		console.log('Length: '+ data.length);
+		//console.log('renderAnnotations');
+		//console.log('Data received: ');
+		//console.log(data);
+		//console.log('Length: '+ data.length);
+		if (annotationCopy == null){
+			/* Create a fresh copy of the variable*/
+			//console.log('It is null. Make a new one');
+			annotationCopy = $('#commentable-container');
+			//console.log(annotationCopy);
+		}
 		for(i=0; i< data.length;i++){
 //			console.log(annotationCopy.children('[data-section-id="'+data[i]['paragraph_id']+'"]'));
 			/* Find the parent container */
-			currentObject = annotationCopy.children('[data-section-id="'+data[i]['paragraph_id']+'"]');
+
+			currentObject = annotationCopy.children('[data-section-id="'+data[i]['paragraph']+'"]');
 			/* Find the annotations container inside that and append the comment */
 			currentComment = $('<div class="comments-container-item">'+
                     			'<div class="comments-container--media">'+
@@ -213,18 +419,25 @@ $(document).ready(function(){
             					'<div class="comments-container--block">'+
             					'<a class="comments-author-link" href="#"><span class="comments-author-name"></span></a>'+
             					'<span class="comments-container--text"></span>'+
+            					'<div class="comments-control-box">'+
+            					'<span class="comments-control comments-delete">Delete</span>'+
+            					'<span class="comments-control">Shared with</span>'+
+            					'</div>'+
+            					'<span class="comments-delete glyphicon glyphicon-remove"></span>'+
             					'</div>'+
             					'</div>');
 			
 			/* Create the annotation */
-			currentComment.find('.comments-author-image').attr('src', data[i]['user']['user_gravatar']);
-			currentComment.find('.comments-author-name').text(data[i]['user']['user_name']);
-			currentComment.find('.comments-author-link').attr('href',data[i]['user']['user_url']);
-			currentComment.find('.comments-container--text').text(data[i]['annotation_body']);
+			currentComment.find('.comments-author-image').attr('src', data[i]['author']['gravatar']);
+			currentComment.find('.comments-author-name').text(data[i]['author']['username']);
+			currentComment.find('.comments-author-link').attr('href',data[i]['author']['url']);
+			currentComment.find('.comments-container--text').text(data[i]['body']);
+			currentComment.find('.comments-delete').attr('data-comment-id', data[i]['id']);
 			
+			currentComment.find('.comments-delete').on('click', deleteAnnotation);
 			/* Also add to main container if the user is a guest. */
-			if((parseInt(data[i]['user']['user_id']) === parseInt(annotations.currentUser['user_id']))||
-					(parseInt(annotations.currentUser['user_id'])===0)){
+			if((parseInt(data[i]['author']['id']) === parseInt(annotations.currentUser['id']))||
+					(parseInt(annotations.currentUser['id'])===0)){
 				/* Append to main visible list*/
 				currentObject.find('[id *="user_annotations_"]').append(currentComment);
 			}
@@ -232,9 +445,13 @@ $(document).ready(function(){
 				/* Append to the folded list */
 				currentObject.find('[id *="other_annotations_"]').append(currentComment);
 				/* Now that we have other annotations, unhide the show button too */
-				currentObject.find('.comments-bucket-toggle').show();
-				/* Bind event to show fold or unfold other annotations*/
-				currentObject.find('.comments-bucket-toggle').on('click', toggleOtherAnnotations);
+				console.log('Unhide the button');
+				
+				if(currentObject.find('.comments-bucket-toggle').hasClass('hidden')){
+					currentObject.find('.comments-bucket-toggle').removeClass('hidden');
+					/* Bind event to show fold or unfold other annotations*/
+					currentObject.find('.comments-bucket-toggle').on('click', toggleOtherAnnotations);
+				}				
 				
 				if(!currentObject.find('.comments-bucket-toggle').hasClass('unfolded')){
 					currentObject.find('.comments-bucket-toggle').removeClass('unfolded');
@@ -246,16 +463,18 @@ $(document).ready(function(){
 			
 			/* Update the annotation count on the button */
 			temp = currentObject.find('.comments--toggle p').text();
-//			console.log('Comment Count is ' +temp);
+			//console.log('Comment Count is ' +temp);
 			commentCount = ((temp = currentObject.find('.comments--toggle p').text()) ==='+') ? 1 : (parseInt(temp)+1);
-//			console.log(currentObject.find('.comments-container'));
+			//console.log(currentObject.find('.comments-container'));
 			currentObject.find('.comments--toggle p').text(commentCount);
 			if(!currentObject.find('.comments--toggle').hasClass('has-annotations') && commentCount > 0)
 			{
 				currentObject.find('.comments--toggle').addClass('has-annotations');
 			}
-//			console.log('Updated comment count to '+ commentCount);
+			//console.log('Updated comment count to '+ commentCount);
 		}
+		/* Put the variable back to sleep now */
+		annotationCopy = null;
 	};
 	
 	
@@ -266,7 +485,40 @@ $(document).ready(function(){
 		/*
 		 * At some point of time, this method will be making Ajax queries. For now, it is just calls renderAnnotations directly by passing fixtures.
 		 */
-		renderAnnotations(fixtures);
+		//renderAnnotations(fixtures);
+		$.ajax({
+		    // the URL for the request
+		    url: 'http://127.0.0.1:8000/annotations/blogcontent/1/comments/',
+		 
+		    // the data to send (will be converted to a query string)
+		    data: {
+		        format:'json'
+		    },
+		 
+		    // whether this is a POST or GET request
+		    type: "GET",
+		 
+		    // the type of data we expect back
+		    dataType : "json",
+		 
+		    // code to run if the request succeeds;
+		    // the response is passed to the function
+		    success: renderAnnotations,
+		 
+		    // code to run if the request fails; the raw request and
+		    // status codes are passed to the function
+		    error: function( xhr, status, errorThrown ) {
+		        //alert( "Sorry, there was a problem!" );
+		        console.log( "Error: " + errorThrown );
+		        console.log( "Status: " + status );
+		        console.dir( xhr );
+		    },
+		 
+		    // code to run regardless of success or failure
+		    complete: function( xhr, status ) {
+		        //alert( "The request is complete!" );
+		    }
+		});
 	};
 	
 	
@@ -404,6 +656,7 @@ $(document).ready(function(){
 	
 	$('#commentable-container').replaceWith(annotationCopy);
 	
+	annotationCopy = null;
 	/*
 	 * Now bind to annotation buttons for clicks
 	 */
@@ -423,4 +676,7 @@ $(document).ready(function(){
  
         e.preventDefault();
     });
+	
+	/* Get the current user */
+	getCurrentUser();
 });
